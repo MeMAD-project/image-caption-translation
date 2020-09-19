@@ -1,0 +1,10 @@
+pytorch-cpu=0.3.1
+pip
+ipython
+cffi
+six
+tqdm
+future
+tensorboard
+flask
+numpy
