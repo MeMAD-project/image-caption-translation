@@ -66,13 +66,13 @@ Citing
 
 If you use this model in a scientific publication, please cite
 
-@inproceedings{gronroos2018memad,
-  title = {The {MeMAD} Submission to the {WMT18} Multimodal Translation Task},
-  author = {Gr{\"o}nroos, Stig-Arne and Huet, Benoit and Kurimo, Mikko and Laaksonen, Jorma and Merialdo, Bernard and Pham, Phu and Sj{\"o}berg, Mats and Sulubacak, Umut and Tiedemann, J{\"o}rg and Troncy, Raphael and V{\'a}zquez, Ra{\'u}l},
-  year = {2018},
-  month = {October},
-  booktitle = {Proceedings of the Third Conference on Machine Translation},
-  publisher = {Association for Computational Linguistics},
-  url = {http://www.aclweb.org/anthology/W18-6439.pdf}
-}
+    @inproceedings{gronroos2018memad,
+        title = {The {MeMAD} Submission to the {WMT18} Multimodal Translation Task},
+        author = {Gr{\"o}nroos, Stig-Arne and Huet, Benoit and Kurimo, Mikko and Laaksonen, Jorma and Merialdo, Bernard and Pham, Phu and Sj{\"o}berg, Mats and Sulubacak, Umut and Tiedemann, J{\"o}rg and Troncy, Raphael and V{\'a}zquez, Ra{\'u}l},
+        year = {2018},
+        month = {October},
+        booktitle = {Proceedings of the Third Conference on Machine Translation},
+        publisher = {Association for Computational Linguistics},
+        url = {http://www.aclweb.org/anthology/W18-6439.pdf}
+    }
 
