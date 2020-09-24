@@ -40,7 +40,7 @@ Image feature extraction
 Extract detectron2 features.
 
     source activate memaddetectron2
-	./image-features --imagelist data/imagelist
+	tools/image-features.py --imagelist data/imagelist
 	source deactivate
 
 Note: `img_feat_dim=80, dtype=torch.float32`.
