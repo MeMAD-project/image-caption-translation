@@ -10,11 +10,12 @@ Download model
 Image feature extraction
 ------------------------
 
-This codebase uses CUDA by default but can be used with a CPU by XXXXXXXXXXXXXXXXXXXXX
+This codebase uses CUDA by default but can be also used with a CPU.
 
     conda create --name memaddetectron2 --file env/detectron2.cuda.conda -c pytorch
     source activate memaddetectron2
     pip install -r env/detectron2.cuda.pip
+	source deactivate
 
 Translation system
 ------------------
@@ -36,7 +37,11 @@ Usage
 Image feature extraction
 ------------------------
 
-**FIXME**: Jorma
+Extract detectron2 features.
+
+    source activate memaddetectron2
+	./image-features --imagelist data/imagelist
+	source deactivate
 
 Note: `img_feat_dim=80, dtype=torch.float32`.
 Saved as a (N,80) matrix in numpy `.npy` format, where N is the number of lines to translate.
@@ -46,6 +51,7 @@ Translation system
 
 Apply BPE segmentation to tokenized, lowercased text.
 
+    source activate memadmmt
     tools/apply_bpe.py --codes models/bpe.50k.multiling < data/input > data/segmented
 
 Preprend the target language tag (either `TO_de` or `TO_fr`) and the domain tag.
