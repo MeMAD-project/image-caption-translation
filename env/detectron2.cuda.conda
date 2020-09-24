@@ -2,3 +2,4 @@ pytorch
 torchvision
 pip
 pytz
+imageio
