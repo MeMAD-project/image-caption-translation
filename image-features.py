@@ -34,7 +34,7 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url('COCO-InstanceSegmentation/mask
 cfg.MODEL.DEVICE='cpu'
 predictor = DefaultPredictor(cfg)
 
-features = np.zeros((len(images), 80))
+features = np.zeros((len(images), 80), dtype=np.float32)
                     
 for i in range(len(images)):
     im = imageio.imread(images[i])
