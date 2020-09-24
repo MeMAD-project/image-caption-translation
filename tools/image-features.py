@@ -3,6 +3,7 @@
 from detectron2 import model_zoo
 from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
+import torch
 import numpy as np
 import imageio
 import argparse
@@ -10,14 +11,15 @@ import argparse
 parser = argparse.ArgumentParser(description='Image feature extraction for multimodal translation.')
 parser.add_argument('images', metavar='FILES', type=str, nargs='*',
                     help='image filenames')
-parser.add_argument('--imagelist', type=str, help='file containing image filenames')
+parser.add_argument('--cpu', action='store_true', help='force to use CPU even if CUDA is available')
+parser.add_argument('--imglist', type=str, help='file containing image filenames')
 parser.add_argument('--output', type=str, default='img_feat.npy',
                     help='output file to store features, if not "%(default)s"')
 args = parser.parse_args()
 
 images = []
-if args.imagelist is not None:
-    for i in open(args.imagelist).readlines():
+if args.imglist is not None:
+    for i in open(args.imglist).readlines():
         images.append(i.rstrip('\n'))
     
 if len(args.images):
@@ -31,7 +33,16 @@ cfg = get_cfg()
 cfg.merge_from_file(model_zoo.get_config_file('COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml'))
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url('COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml')
-cfg.MODEL.DEVICE='cpu'
+
+print('Extracting detectron2 mask surface features for',
+      len(images), 'images with', end=' ')
+
+if args.cpu or not torch.cuda.is_available():
+    cfg.MODEL.DEVICE='cpu'
+    print('CPU')
+else:
+    print('CUDA')
+    
 predictor = DefaultPredictor(cfg)
 
 features = np.zeros((len(images), 80), dtype=np.float32)
@@ -45,4 +56,5 @@ for i in range(len(images)):
 
 np.save(open(args.output, 'wb'), features)
 
+print('Stored features in "', args.output, '"', sep='')
 
