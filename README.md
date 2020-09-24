@@ -10,7 +10,11 @@ Download model
 Image feature extraction
 ------------------------
 
-**FIXME**: Jorma
+This codebase uses CUDA by default but can be used with a CPU by XXXXXXXXXXXXXXXXXXXXX
+
+    conda create --name memaddetectron2 --file env/detectron2.cuda.conda -c pytorch
+    source activate memaddetectron2
+    pip install -r env/detectron2.cuda.pip
 
 Translation system
 ------------------
