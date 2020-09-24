@@ -37,7 +37,7 @@ Usage
 Image feature extraction
 ------------------------
 
-Extract detectron2 features.
+Extract detectron2 features and store them in `img_feat.npy`.
 
     source activate memaddetectron2
 	tools/image-features.py --imagelist data/imagelist
