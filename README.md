@@ -40,7 +40,7 @@ Image feature extraction
 Extract detectron2 features and store them in `img_feat.npy`.
 
     source activate memaddetectron2
-	tools/image-features.py --imagelist data/imagelist
+	tools/image-features.py --imglist data/imglist
 	source deactivate
 
 Note: `img_feat_dim=80, dtype=torch.float32`.
