@@ -8,9 +8,10 @@ import numpy as np
 import imageio
 import argparse
 
-# model_name = "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"
-model_name = "Misc/cascade_mask_rcnn_X_152_32x8d_FPN_IN5k_gn_dconv.yaml"
+model_name = "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"
+# model_name = "Misc/cascade_mask_rcnn_X_152_32x8d_FPN_IN5k_gn_dconv.yaml"
 score_threshold = 0.0
+num_classes = 80
 
 parser = argparse.ArgumentParser(description='Image feature extraction for multimodal translation.')
 parser.add_argument('images', metavar='FILES', type=str, nargs='*',
@@ -49,7 +50,7 @@ else:
 
 predictor = DefaultPredictor(cfg)
 
-features = np.zeros((len(images), 80), dtype=np.float32)
+features = np.zeros((len(images), num_classes), dtype=np.float32)
 
 for i in range(len(images)):
     im = imageio.imread(images[i])
@@ -57,12 +58,15 @@ for i in range(len(images)):
     pred_masks = outputs["instances"].pred_masks.cpu().numpy()
     pred_classes = outputs["instances"].pred_classes.cpu().numpy()
 
-    for j, c in enumerate(pred_classes):
-        img_size = pred_masks[j].shape
-        tot_count = img_size[0] * img_size[1]
-        ms = np.count_nonzero(pred_masks[j]) / tot_count
-        features[i, c] += ms  # mask_surface
-        # features[i, c] += 1   # bbox_count
+    img_size = pred_masks[0].shape
+    tot_count = img_size[0] * img_size[1]
+    class_masks = np.zeros((num_classes, img_size[0], img_size[1]))
+
+    for j, k in enumerate(pred_classes):
+        class_masks[k] += pred_masks[j]
+
+    for k in range(num_classes):
+        features[i, k] = np.count_nonzero(class_masks[k]) / tot_count
 
 np.save(open(args.output, 'wb'), features)
 
