@@ -20,6 +20,8 @@ parser.add_argument('--cpu', action='store_true', help='force to use CPU even if
 parser.add_argument('--imglist', type=str, help='file containing image filenames')
 parser.add_argument('--output', type=str, default='img_feat.npy',
                     help='output file to store features, if not "%(default)s"')
+parser.add_argument('--faulty-features', action='store_true',
+                    help='extract wrong feature type as in WMT18 evaluation')
 args = parser.parse_args()
 
 images = []
@@ -39,7 +41,8 @@ cfg.merge_from_file(model_zoo.get_config_file(model_name))
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = score_threshold
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(model_name)
 
-print('Extracting detectron2 mask surface features for',
+feature_name = 'mask surface' if not args.faulty_features else 'bbox_count'
+print('Extracting detectron2', feature_name, 'features for',
       len(images), 'images with', end=' ')
 
 if args.cpu or not torch.cuda.is_available():
@@ -55,18 +58,23 @@ features = np.zeros((len(images), num_classes), dtype=np.float32)
 for i in range(len(images)):
     im = imageio.imread(images[i])
     outputs = predictor(im)
-    pred_masks = outputs["instances"].pred_masks.cpu().numpy()
-    pred_classes = outputs["instances"].pred_classes.cpu().numpy()
+    pred_masks = outputs['instances'].pred_masks.cpu().numpy()
+    pred_classes = outputs['instances'].pred_classes.cpu().numpy()
 
-    img_size = pred_masks[0].shape
-    tot_count = img_size[0] * img_size[1]
-    class_masks = np.zeros((num_classes, img_size[0], img_size[1]))
+    if args.faulty_features:
+        for k in pred_classes:
+            features[i, k] += 1
+        
+    else:
+        img_size = pred_masks[0].shape
+        tot_count = img_size[0] * img_size[1]
+        class_masks = np.zeros((num_classes, img_size[0], img_size[1]))
 
-    for j, k in enumerate(pred_classes):
-        class_masks[k] += pred_masks[j]
+        for j, k in enumerate(pred_classes):
+            class_masks[k] += pred_masks[j]
 
-    for k in range(num_classes):
-        features[i, k] = np.count_nonzero(class_masks[k]) / tot_count
+            for k in range(num_classes):
+                features[i, k] = np.count_nonzero(class_masks[k]) / tot_count
 
 np.save(open(args.output, 'wb'), features)
 
