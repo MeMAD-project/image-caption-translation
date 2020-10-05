@@ -15,7 +15,7 @@ This codebase uses CUDA by default but can be also used with a CPU.
     conda create --name memaddetectron2 --file env/detectron2.cuda.conda -c pytorch
     source activate memaddetectron2
     pip install -r env/detectron2.cuda.pip
-	source deactivate
+    source deactivate
 
 Translation system
 ------------------
@@ -30,6 +30,7 @@ Note that this codebase uses old versions of libraries. CUDA is disabled.
     git checkout develop_mmod
     python setup.py install
     popd
+    source deactivate
 
 Usage
 =====
@@ -40,11 +41,11 @@ Image feature extraction
 Extract detectron2 features and store them in `img_feat.npy`.
 
     source activate memaddetectron2
-	tools/image-features.py --imglist data/imglist
-	source deactivate
+    tools/image-features.py --imglist data/imglist
+    source deactivate
 
 Note: `img_feat_dim=80, dtype=torch.float32`.
-Saved as a (N,80) matrix in numpy `.npy` format, where N is the number of lines to translate.
+Saved as an (N,80) matrix in numpy `.npy` format, where N is the number of lines to translate.
 
 Translation system
 ------------------
@@ -60,16 +61,24 @@ Preprend the target language tag (either `TO_de` or `TO_fr`) and the domain tag.
     sed -e "s/^/<TO_fr> <DOMAIN_caption> /" < data/segmented > data/prefixed.fr
 
 Perform translation.
-(This example feeds in a zero vector as dummy features. This has less effect on the result than you might expect.)
 
     OpenNMT-py/translate_mmod_finetune.py \
         -model models/opennmt.transformer.multiling.mscoco+multi30k+subs3M.domainprefix.mmod.imgw.meanfeat.detectron.mask_surface.bpe50k_acc_80.57_ppl_2.43_e23.pt \
         -src data/prefixed.de \
-        -path_to_test_img_feats dummy.zeros.npy \
+        -path_to_test_img_feats img_feat.npy \
         -output data/translated.de \
         --multimodal_model_type imgw
 
 Postprocess translation: join BPE subwords, recase.
+
+One can feed in a zero vector as dummy features by replacing in the above command 
+
+    -path_to_test_img_feats img_feat.npy
+
+with
+
+    -path_to_test_img_feats dummy.zeros.npy
+
 
 Citing
 ======
