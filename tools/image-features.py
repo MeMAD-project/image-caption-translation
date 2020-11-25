@@ -73,8 +73,8 @@ for i in range(len(images)):
         for j, k in enumerate(pred_classes):
             class_masks[k] += pred_masks[j]
 
-            for k in range(num_classes):
-                features[i, k] = np.count_nonzero(class_masks[k]) / tot_count
+        for k in range(num_classes):
+            features[i, k] = np.count_nonzero(class_masks[k]) / tot_count
 
 np.save(open(args.output, 'wb'), features)
 
